@@ -82,3 +82,11 @@ class FormHelperSampleController extends AppController
 動作がまちまちで使いづらかった...  
 慣れが必要かもしれない
 
+## レイアウトの作成
+View/Layouts ディレクトリ内に保存したctp ファイルがテンプレート？ひな形？として利用できるようになる  
+利用するファイルの選択は、 アクションメソッド内で`$this->layout = "LayoutName"` と設定する  
+この場合は、 `View/Layout/LayoutName.ctp` が読み込まれる  
+各コントローラ・アクションメソッドに対応するctpファイル(LayoutSample/index.ctpなど)は  
+各画面やコントローラの処理結果で変動するコンテンツ部分だけを出力するように作成しておく  
+レイアウトファイル内で、 `$content_for_layout` を出力すると、これらの内容が表示できる  
+つまり、`$content_for_layout` を表示しないと、どんな場合も同じ表示になってしまうので注意
