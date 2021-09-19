@@ -24,7 +24,7 @@ class FormHelperSampleController extends AppController
 
         $this->Security->csrfCheck = true; /* csrfトークンを生成する */
         $this->Security->csrfExpires = '+1 hour'; /* csrf トークンの期限を1時間に設定？ */
-        $this->Security->csrfUseOnce = false; /* carf トークンを再利用する */
+        $this->Security->csrfUseOnce = false; /* csrf トークンを再利用する */
     }
 
     public function index()
