@@ -34,12 +34,12 @@ class FormHelperSampleController extends AppController
         /* フォームを処理するモデルの設定をnullに変更 */
         $this->modelClass = null;
 
-        $user_input = "";
+        $posted = [];
         if ($this->request->data){ /* POSTデータが送信されてきているかを確認する */
-            $user_input = htmlspecialchars($this->request->data['user_input'], ENT_QUOTES);
+            foreach($this->request->data as $k => $v){
+                $posted[$k] = htmlspecialchars($v, ENT_QUOTES);
+            }
         }
-
-        $this->set("user_input", $user_input);
         $this->set("posted", $this->request->data);
     }
 }

@@ -77,3 +77,8 @@ class FormHelperSampleController extends AppController
 }
 
 ```
+
+### FormHelperの設定内容
+動作がまちまちで使いづらかった...  
+慣れが必要かもしれない
+
