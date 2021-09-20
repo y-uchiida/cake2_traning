@@ -15,6 +15,26 @@ class ContactsController extends AppController
 		$this->set("page_title", 'お問い合わせフォーム');
     }
 
+	public function list($page = 1){
+		define('LIMIT', 5); /* レコードの取得数上限 */
+
+		$this->autoLayout = true;
+		$this->layout = 'layout_sample';
+		$this->set("page_title", 'お問い合わせ一覧');
+
+		$count = $this->Contact->find('count');
+		$page_num = ceil($count / LIMIT);
+		$records = $this->Contact->find('all', [
+			'limit' => LIMIT,
+			'page' => $page
+		]);
+
+		$this->set('count', $count);
+		$this->set('page', $page);
+		$this->set('page_num', $page_num);
+		$this->set('records', $records);
+	}
+
     /* POST データを受け取る画面 addを作成 */
     public function add()
     {

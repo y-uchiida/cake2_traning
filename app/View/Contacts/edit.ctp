@@ -7,6 +7,13 @@ if (isset($msg)){
 }else{
 	echo "<p>以下のフォームからお問い合わせ内容を入力してください</p>";
 }
+?>
+
+<div>
+	<a href="/Contacts/list">一覧画面に戻る</a>
+</div>
+
+<?php
 
 /* エラーメッセージがあればそれを表示 */
 if (isset($err_msg)){
@@ -44,3 +51,7 @@ echo $this->Form->hidden('confirm_privacy_policy', [
 ]);
 echo $this->Form->end('編集');
 ?>
+
+<div>
+	<a href="/Contacts/list">一覧画面に戻る</a>
+</div>
