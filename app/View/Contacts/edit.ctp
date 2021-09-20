@@ -1,6 +1,12 @@
-<p>以下のフォームからお問い合わせ内容を入力してください</p>
+
 
 <?php
+
+if (isset($msg)){
+	print("<p>$msg</p>");
+}else{
+	echo "<p>以下のフォームからお問い合わせ内容を入力してください</p>";
+}
 
 /* エラーメッセージがあればそれを表示 */
 if (isset($err_msg)){
@@ -13,7 +19,8 @@ $this->Form->unlockField('email');
 /* FormHelper を使って、Contact モデル用の入力フォームを生成する
  * create() の第1引数は、モデル名にしておくこと
  */
-echo $this->Form->create('Contact', ['type' => 'post', 'url' => '/Contacts/add']);
+echo $this->Form->create('Contact', ['type' => 'post']);
+echo $this->Form->hidden('id');
 echo $this->Form->input('name', ['label' => 'お名前']);
 echo $this->Form->radio('gender', ['f' => '男性', 'm' => '女性' ]);
 echo $this->Form->input('email', ['label' => 'メールアドレス']);
@@ -31,9 +38,9 @@ echo $this->Form->select('contact_type', [
 echo '</div>';
 echo $this->Form->label('content', 'お問い合わせ内容');
 echo $this->Form->textArea('content', ['rows' => 5, 'cols' => 50]);
-echo $this->Form->input('confirm_privacy_policy', [
+echo $this->Form->hidden('confirm_privacy_policy', [
 	'type' => 'checkbox',
 	'label' => '個人情報保護方針に同意します'
 ]);
-echo $this->Form->end('送信');
+echo $this->Form->end('編集');
 ?>
