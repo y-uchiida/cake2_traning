@@ -29,13 +29,17 @@ echo $this->Html->css('page');
 
 </head>
 <body>
+	<!-- Primary Page Layout
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<div class="container">
+		<div class="row">
+			<div style="margin-top: 10%">
 
 <h1><?php
 if (isset($page_title)) {echo $page_title;}
 ?></h1>
 
 <?php
-
 /* $content_for_layout は、元のviewファイルの内容を自動的に読み込んで表示してくれる、
  * CakePHP で用意された変数
  * これを出力しておかないと、アクションメソッドによって可変となるコンテンツ部分がレイアウトファイル内に反映されない
@@ -43,5 +47,8 @@ if (isset($page_title)) {echo $page_title;}
 echo $content_for_layout;
 ?>
 
+			</div>
+		</div>
+	</div>
 </body>
 </html>
