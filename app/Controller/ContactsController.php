@@ -48,7 +48,7 @@ class ContactsController extends AppController
 			// print('</pre>');
 
 			/* save()の引数は、受け取ったデータのオブジェクト名？まで設定する必要があるっぽい */
-			$result = $this->Contact->save($this->request->data['Contacts']);
+			$result = $this->Contact->save($this->request->data);
 
             $error = '';
             if ($result) {
@@ -83,7 +83,6 @@ class ContactsController extends AppController
 			}
 		}
 		
-
 		/* /Contact/edit/{id} の形式のURLにアクセスされたときに、
 		 * 引数 $id に、URLのパスの一部({id}の部分)が設定される
 		 * これを使って、編集するデータを特定する
@@ -109,6 +108,35 @@ class ContactsController extends AppController
 		if(isset($msg)){
 			$this->set("msg", $msg);
 		}
+	}
+
+	/* 削除 */
+	public function delete($id = -1){
+		$this->autoRender = false;
+		if ($id === -1){
+			print("<p>削除対象が指定されていません</p>");
+			print("<p><a href='/Contacts/list'>お問い合わせ一覧へ戻る</a></p>");
+			return ;
+		}
+
+		$contact_data = $this->Contact->read(null, $id);
+		if (empty($contact_data)){
+			print("<p>指定された削除対象が存在しません</p>");
+			print("<p><a href='/Contacts/list'>お問い合わせ一覧へ戻る</a></p>");
+			return ;
+		}
+
+		/* 削除処理を実施する */
+		$result = $this->Contact->delete($id);
+		
+		$message = "<p>データの削除に成功しました(id: $id)</p>";
+		if ($result === false){
+			$message = "<p>データの削除に失敗しました(id: $id)</p>";
+		}
+		echo $message;
+		print("<p><a href='/Contacts/list'>お問い合わせ一覧へ戻る</a></p>");
+		return ;
+
 	}
 
     public function model_test()
