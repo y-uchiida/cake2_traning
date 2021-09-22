@@ -14,21 +14,21 @@ class Comment extends AppModel {
 	public $displayField = 'content';
 
 /**
+ * Associations
+ *
+ * @var array
+ */
+	public $belongsTo = [ 
+		'Post',
+		'User'
+	];
+
+/**
  * Validation rules
  *
  * @var array
  */
 	public $validate = array(
-		'id' => array(
-			'naturalNumber' => array(
-				'rule' => array('naturalNumber'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
 		'content' => array(
 			'notBlank' => array(
 				'rule' => array('notBlank'),
