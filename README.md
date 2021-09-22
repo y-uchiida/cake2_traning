@@ -91,6 +91,12 @@ View/Layouts ディレクトリ内に保存したctp ファイルがテンプレ
 レイアウトファイル内で、 `$content_for_layout` を出力すると、これらの内容が表示できる  
 つまり、`$content_for_layout` を表示しないと、どんな場合も同じ表示になってしまうので注意
 
+## データベース設定ファイル
+書き忘れていたので追記...  
+`app/Config/database.php.default` に、データベースとの接続情報を記載するひな形が置いてある  
+このファイルを`app/Config/database.php` にリネームして利用する  
+.gitignore の初期設定で、このファイルを追跡しないように記述されていて安心
+
 ## モデルの利用
 とりあえず、フォームヘルパーのハンズオンで利用した「お問い合わせフォーム的なもの」のレコードを  
 保存するためのテーブル「contacts」を作成し、そのモデルを操作してみることに  
@@ -254,3 +260,82 @@ $ app/Console/cake schema generate
 ```
 $ app/Console/cake schema update
 ```
+## bake を利用したテンプレートファイルの生成
+Laravel のartisan みたいなもの  
+基本的に、インタラクティブ形式で生成するファイルの内容を決めていく  
+
+```
+$ app/Console/cake bake
+
+Welcome to CakePHP v2.10.24 Console
+---------------------------------------------------------------
+App : app
+Path: /c/Users/y-uchiida/Documents/develop/cake2_training/app/
+---------------------------------------------------------------
+Interactive Bake Shell
+---------------------------------------------------------------
+[D]atabase Configuration
+[M]odel
+[V]iew
+[C]ontroller
+[P]roject
+[F]ixture
+[T]est case
+[Q]uit
+What would you like to Bake? (D/M/V/C/P/F/T/Q)
+>
+```
+モデルを作るなら[M]、コントローラなら[C]、など  
+説明を見ながらやれば、使い方はそれほど難しくなかった  
+
+### bake でモデルを作成する
+先にテーブル定義を作成しておくと、その内容を読み取ってバリデーションまでインタラクティブ形式で設定させてくれるので楽かも
+
+### bake でコントローラを作成する
+先にモデルを作っておかないと、選択肢の中に出てこない...ので、順序としてはモデルの後がよさそう  
+
+### bake でビューを作成する
+先にモデルとコントローラを作っておかないと、ビューが作れない（エラーになってしまう）  
+ので、ビューは最後に作る
+
+### bakeでのアプリケーションファイル生成の手順、結論
+1. RDBMS（PhpMyAdminなど）で、データベースにテーブルを追加しておく
+2. マイグレーションファイルを作成
+3. スキーマファイルに、更新を反映（snapshotにしておくとよさそう）
+4. bake でモデルを作る
+5. bake でコントローラを作る
+6. bake でビューを作る
+
+## モデルでのバリデーション
+CookBook読んだらだいたい分かったのと、bake で作ってしまえばひな形も用意されるので、それに沿って進めたら大丈夫そう。  
+1点つまづいたのが、プライマリキーに対してバリデーションルールを設定してしまうと、scaffoldでのデータ追加時にエラーになること。  
+どうやら、データがnullなのにルール適用しようとしてしまってうまくいかなくなる模様。  
+プライマリキーのルールを消したら動いた。
+
+## モデル間の連携(アソシエーション)
+これも、CookBook読んだらほぼわかるのでさらっと...  
+| # | メソッド名  | カーディナリティ | 概要 |
+| ---- | ---- | ---- | ---- |
+| 1 | hasOne | 1-1 | 従テーブルに重複しない外部キーの値 |
+| 2 | hasMany | 1-＊ | 従テーブルに重複した外部キーの値 |
+| 3 | belogsTo | X-1 | 従テーブル側から主テーブルへの参照 |
+| 4 | hasAndBelongsToMany | ＊-＊ | 多対多連携、中間テーブルを用いる<br>名前が長い |
+
+設定方法は、モデルクラスにpublicのプロパティ(変数)を定義する  
+以下は、UserモデルにCommentモデルとのアソシエーション(hasMany)を設定する例
+```
+class User extends AppModel {
+    public $hasMany = array(
+        'Comment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'user_id',
+            'conditions' => array('Comment.status' => '1'),
+            'order' => 'Comment.created DESC',
+            'limit' => '5',
+            'dependent' => true
+        )
+    );
+}
+```
+HABTM(hasAndBelongsToMany)が一番いろいろなプロパティを持っている  
+中間テーブル名を指定する場合、「joinTable」を利用する
