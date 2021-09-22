@@ -150,3 +150,107 @@ idに一致したレコードを取り出してきてくれ、フォームから
 すると、View でFormHelperを利用した際にその内容を自動的に埋めてくれる
 データの保存は、add と同じ方法。ただし既存データが対象なので、form にidを持たせておかないといけない
 
+## モデルを利用したレコードの削除
+コントローラから、`$this->(Modelクラス)->delete(id, bool)`  
+第2引数は、リレーションのあるテーブルからデータの削除をするかどうかを設定できる  
+
+## マイグレーション
+### 導入
+パッケージを入れないといけないっぽい  
+```
+$ cd app/Plugin/
+$ git clone git://github.com/CakeDC/migrations.git Migrations
+```
+そのあと、bootstrap.phpにプラグインの読み込みを追加する
+```
+[app/Config/bootstrap.php]
+CakePlugin::load(array('Migrations'));
+
+```
+
+### 初期マイグレーションの作成
+データベースのテーブルの定義内容を参照してSQLを書き出してくれる  
+Laravelのマイグレーションとは違って、テーブル定義を書くことはできないよう  
+
+```
+// 初期化
+$ app/Console/cake Migrations.migration run all -p
+Cake Migration Shell
+---------------------------------------------------------------
+Running migrations:
+---------------------------------------------------------------
+All migrations have completed.
+
+// マイグレーションファイルの作成
+$ app/Console/cake Migrations.migration generate
+Cake Migration Shell
+---------------------------------------------------------------
+Do you want to generate a dump from the current database? (y/n)
+[y] > y
+---------------------------------------------------------------
+Generating dump from the current database...
+Do you want to preview the file before generation? (y/n)
+[y] > n
+Please enter the descriptive name of the migration to generate:
+> create_contacts_table
+Generating Migration...
+
+Done.
+Do you want to update the schema.php file? (y/n) //yにすると、Schema Shellが呼び出される
+[y] > y
+
+Welcome to CakePHP v2.10.24 Console
+---------------------------------------------------------------
+App : app
+Path: /c/Users/y-uchiida/Documents/develop/cake2_training/app/
+---------------------------------------------------------------
+Cake Schema Shell
+---------------------------------------------------------------
+Generating Schema...
+Schema file: schema.php generated
+```
+
+### マイグレーションの実行
+```
+$ app/Console/cake Migrations.migration run all
+Cake Migration Shell
+---------------------------------------------------------------
+Running migrations:
+---------------------------------------------------------------
+All migrations have completed.
+```
+
+### マイグレーションについての参考ページ
+CakePHP2系でマイグレーションを利用する方法:  
+https://www.ryuzee.com/contents/blog/6108  
+
+## schema.php
+schema.phpは、cake自身が持っているデータベース管理の機能？？  
+パッケージを入れてなくてもDBのバージョン管理ができるように、schema.phpも最新の状態を反映したものにしておくとよい、、、のかな？  
+スキーマファイルは、ひとつのファイルでデータベース全体を管理する仕組み  
+テーブル定義の更新によって、新旧のファイルの内容にコンフリクトが発生する場合がある  （別々の開発者が、それぞれ異なる変更を加えた場合など）  
+その場合は手動でのコンフリクト解決が必要になる  
+スキーマの管理方法に合わせて、snapshot かdiff かを選択できる  
+スキーマファイルの作成時に、すでにスキーマファイルがある場合、snapshotを選ぶと、
+連番で管理されたスキーマファイルが作成される (scheme_1.php -> schema_2.php > schema_3.php ...)  
+上書き（Overwritten）を選択すると、もともとあるschema.phpが更新される  
+変更の履歴を取っておくという意味では、データがかさばりそうだけどsnapshot形式のほうがよさそうな気はする...  
+
+### schema.phpの利用
+
+#### スキーマファイルの作成
+```
+$ app/Console/cake schema generate
+```
+モデルファイルを持たないテーブルもスキーマファイルに含める場合は、`-f` オプションをつける  
+
+#### スキーマファイルの内容をテーブル定義に反映
+既存のテーブルを削除して、スキーマファイル通りの内容でテーブルを作成する
+```
+```
+初回作成の場合もこれでいい  
+
+既存のテーブルとスキーマファイルを比較して、差分を更新する場合は以下
+```
+$ app/Console/cake schema update
+```
